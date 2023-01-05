@@ -1,5 +1,5 @@
 const { MongoClient } = require("mongodb");
-const Db = process.env.ATLAS_URI || "mongodb+srv://<user>:<password>@cluster0.ginyqsx.mongodb.net/?retryWrites=true&w=majority";
+const Db = process.env.ATLAS_URI || "mongodb+srv://development:hS7KqtjHLfZins2G@cluster0.ginyqsx.mongodb.net/?retryWrites=true&w=majority";
 console.log("DB", Db);
 const client = new MongoClient(Db, {
   useNewUrlParser: true,
@@ -14,7 +14,7 @@ module.exports = {
       // Verify we got a good "db" object
       if (db)
       {
-        _db = db.db("employees");
+        _db = db.db("mern-app");
         console.log("Successfully connected to MongoDB."); 
       }
       return callback(err);
