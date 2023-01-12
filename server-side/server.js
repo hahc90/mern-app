@@ -1,20 +1,43 @@
-const express = require("express");
+require('dotenv').config();
+const express = require( "express" );
 const app = express();
+const path = require( 'path' );
+const { logger } = require('./middleware/logger');
+const errorHandler = require( './middleware/errorHandler' );
+const cookieParser = require( 'cookie-parser' );
 const cors = require("cors");
-require("dotenv").config({ path: "./config.env" });
-const port = process.env.PORT || 5000;
-console.log("port", port);
-app.use(cors());
-app.use(express.json());
-app.use(require("./routes/record"));
+const corsOptions = require( './config/corsOptions' );
+const PORT = process.env.PORT || 3500;
+
+console.log(process.env.NODE_ENV)
+
+app.use( logger );
+app.use( cors( corsOptions ) );
+app.use( express.json() );
+app.use( cookieParser() );
+
+app.use('/', require( './routes/root' ))
+app.use('/', express.static( path.join( __dirname
+	, '/public' )));
+	app.all( '*', ( req, res ) => {
+	res.status( 404 ) 
+	if( req.accepts( 'json' ) ){
+		res.sendFile( path.join( __dirname, 'views', '404.html' ) )
+	} else if( req.accepts( 'json' ) ) {
+		res.json( { message: '404 Not Found' } );
+	}else{
+		res.type('txt').send('404 Not Found');
+	}
+})
 // get driver connection
-const dbo = require("./database/connection");
- 
-app.listen(port, () => {
+const dbo = require( "./database/connection" );
+
+app.use( errorHandler );
+app.listen(PORT, () => {
   // perform a database connection when server starts
-  dbo.connectToServer(function (err) {
-    if (err) console.error(err);
+  dbo.connectToServer( function ( err ) {
+    if ( err ) console.error( err );
  
   });
-  console.log(`Server is running on port: ${port}`);
+  console.log(`Server is running on port: ${PORT}`);
 });
