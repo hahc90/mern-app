@@ -17,18 +17,18 @@ const getAllNotes = asyncHandler(async (req, res) => {
     // Add username to each note before sending the response 
     // See Promise.all with map() here: https://youtu.be/4lqJBBEpjRE 
     // You could also do this with a for...of loop
-    const notesWithUser = await Promise.all(notes.map(async (note) => {
-        const user = await User.findById(note.user).lean().exec()
+    const notesWithUser = await Promise.all( notes.map( async ( note ) => {
+        const user = await User.findById( note.user ).lean().exec()
         return { ...note, username: user.username }
     }))
 
-    res.json(notesWithUser)
+    res.json( notesWithUser )
 })
 
 // @desc Create new note
 // @route POST /notes
 // @access Private
-const createNewNote = asyncHandler(async (req, res) => {
+const createNewNote = asyncHandler( async (req, res) => {
     const { user, title, text } = req.body
 
     // Confirm data
@@ -46,7 +46,7 @@ const createNewNote = asyncHandler(async (req, res) => {
     // Create and store the new user 
     const note = await Note.create({ user, title, text })
 
-    if (note) { // Created 
+    if ( note) { // Created 
         return res.status(201).json({ message: 'New note created' })
     } else {
         return res.status(400).json({ message: 'Invalid note data received' })
